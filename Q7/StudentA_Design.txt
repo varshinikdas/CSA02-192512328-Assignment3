@@ -1,0 +1,48 @@
+Q7 – DESIGN AN ELECTION COUNTING PROGRAM FROM FIRST PRINCIPLES
+Student: Sri Varshini K | Register Number: 192512328
+Role completed: Student A – Stage 2 (Design), 3 marks
+
+1. Design overview
+Input: candidate_count c (1..12), vote_count v (0..5000), followed by v integer candidate numbers.
+A vote is valid exactly when 1 <= vote <= c. Values 0, negative values, and values greater than c are invalid.
+Output: valid and invalid vote totals; each candidate's vote total in descending order; winner; tie status.
+
+2. Data structures
+- int count[13] : count[i] stores votes for candidate i; index 0 is unused.
+- CandidateResult results[12] : candidate number and vote total, used to order the final report.
+- Scalar counters valid_votes and invalid_votes.
+The array sizes are bounded by the PDF limits (12 candidates and 5,000 votes).
+
+3. Counting method pseudocode
+READ c, v
+INITIALISE count[1..c] TO 0
+valid_votes = 0; invalid_votes = 0
+REPEAT v times:
+    READ vote
+    IF vote >= 1 AND vote <= c:
+        count[vote] = count[vote] + 1
+        valid_votes = valid_votes + 1
+    ELSE:
+        invalid_votes = invalid_votes + 1
+
+4. Sorting and tie detection pseudocode
+FOR i = 1 TO c:
+    results[i] = (candidate_number=i, votes=count[i])
+SORT results by votes descending
+    (for equal vote totals, use candidate number ascending as a deterministic display rule)
+max_votes = results[1].votes
+winner_count = number of candidates whose votes equal max_votes
+IF winner_count > 1:
+    tie = YES
+ELSE:
+    tie = NO
+PRINT valid_votes, invalid_votes, sorted results, winner(s), tie
+
+5. Complexity
+Counting is O(v), because each vote is read and processed once. Initialising and reporting candidates is O(c). Sorting the at-most-c candidate records with a simple comparison sort is O(c^2), so total time is O(v + c^2), and auxiliary space is O(c). With c <= 12 and v <= 5,000, the bounded candidate sort is small compared with processing the votes.
+
+6. Design defence
+A count array indexed directly by candidate number avoids searching candidate names for each vote. It performs one direct array update per valid vote. For 500 candidates, enlarge the count/result arrays to 501 elements and validate 1..500; the algorithm remains O(v + c^2), though storage and report sorting grow with c. One limitation is that candidate numbers must be valid numeric identifiers mapped consistently to candidates; the design does not authenticate voters or prevent duplicate voting.
+
+7. Student A scope boundary
+The PDF assigns implementation, invalid-vote/tie execution tests, and timing at 5,000 and 500,000 votes to Student B (Stage 3). Those Student B deliverables are intentionally not included in this Student A project.
